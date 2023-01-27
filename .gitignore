@@ -1,0 +1,11 @@
+*.sh
+*.terraform
+*.pem
+*.tfvars
+*.tfplan
+*.tfstate
+*.tfstate.backup
+*.lock.info
+.terraform
+*.hcl
+tf_sa_key
