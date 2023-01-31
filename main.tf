@@ -7,7 +7,6 @@ terraform {
     }
   }
 }
-
 provider "azurerm" {
   # Configuration options
   features {}
@@ -15,16 +14,16 @@ provider "azurerm" {
 
 # Define the Azure Resource Group
 resource "azurerm_resource_group" "advanced" {
-    name="ad-terraform-rg"
+    name="advanced-rg"
     location = "eastus"
-#  Flag Azure Resources as Managed by Terraform using 'source' Tag
+#  Flagging Azure resources as managed by terraform using 'source' Tag
     tags = {
       source = "terraform"
     }
 }
 # Create Network Security Group and Rule
 resource "azurerm_network_security_group" "advanced" {
-  name = "ad-terraform-nsg"
+  name = "advanced-nsg"
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
 
@@ -64,69 +63,59 @@ resource "azurerm_network_security_group" "advanced" {
 }
 #Creates Virtual Network
 resource "azurerm_virtual_network" "advanced" {
-  name = "ad-terraform-vnet"
+  name = "advanced-vnet"
   address_space = ["10.0.0.0/16"]
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
 }
 # Defines a Subnet
 resource "azurerm_subnet" "advanced" {
-  name = "ad-terraform-subnet"
+  name = "advanced-subnet"
   resource_group_name = azurerm_resource_group.advanced.name
   virtual_network_name = azurerm_virtual_network.advanced.name
   address_prefixes = ["10.0.1.0/24"]
 }
 #Define public IP Address
 resource "azurerm_public_ip" "advanced" {
-  name = "ad-terraform-pIP"
+  name = "advanced-pIP"
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
   allocation_method = "Static"
 }
-
 #Define a network interface
 resource "azurerm_network_interface" "advanced" {
-  name = "ad-terraform-nic"
+  name = "advanced-nic"
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
 
   ip_configuration {
-    name = "ad-terraform-config"
+    name = "advanced-config"
     subnet_id = azurerm_subnet.advanced.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
-resource "azurerm_virtual_machine" "advanced" {
-  name = "vm-nginx"
-  location = azurerm_resource_group.advanced.location
+resource "azurerm_linux_virtual_machine" "nginxVM" {
+  name = "advanced-nginxVM"
   resource_group_name = azurerm_resource_group.advanced.name
-  network_interface_ids = [azurerm_network_interface.advanced.id]
-  vm_size = "Standard_DS1_v2"
-  
-  storage_image_reference {
+  location = azurerm_resource_group.advanced.location
+  size = "Standard_DS1_v2"
+  admin_username = "adminuser"
+  admin_password = "P@ssw0rd12!"
+  network_interface_ids = [azurerm_network_interface.advanced.id,]
+
+  os_disk {
+    caching = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20.04-LTS"
-    version   = "latest"
+    offer = "UbuntuServer"
+    sku = "18.04-LTS"
+    version = "latest"
   }
 
-  storage_os_disk {
-    name              = "myosdisk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  os_profile {
-    computer_name  = "hostname"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-  tags = {
-    environment = "staging"
-  }
+  disable_password_authentication = false
 }
+
