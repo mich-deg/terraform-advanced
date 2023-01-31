@@ -14,8 +14,8 @@ provider "azurerm" {
 
 # Define the Azure Resource Group
 resource "azurerm_resource_group" "advanced" {
-    name="advanced-rg"
-    location = "eastus"
+    name= var.resource_group_name
+    location = var.location
 #  Flagging Azure resources as managed by terraform using 'source' Tag
     tags = {
       source = "terraform"
