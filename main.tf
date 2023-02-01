@@ -14,8 +14,8 @@ provider "azurerm" {
 
 # Define the Azure Resource Group
 resource "azurerm_resource_group" "advanced" {
-    name= var.resource_group_name
-    location = var.location
+    name= var.rg_name
+    location = var.rg_location
 #  Flagging Azure resources as managed by terraform using 'source' Tag
     tags = {
       source = "terraform"
@@ -23,7 +23,7 @@ resource "azurerm_resource_group" "advanced" {
 }
 # Create Network Security Group and Rule
 resource "azurerm_network_security_group" "advanced" {
-  name = "advanced-nsg"
+  name = var.nsg_name
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
 
@@ -63,14 +63,14 @@ resource "azurerm_network_security_group" "advanced" {
 }
 #Creates Virtual Network
 resource "azurerm_virtual_network" "advanced" {
-  name = "advanced-vnet"
-  address_space = ["10.0.0.0/16"]
+  name = var.vn_name
+  address_space = [var.address_space]
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
 }
 # Defines a Subnet
 resource "azurerm_subnet" "advanced" {
-  name = "advanced-subnet"
+  name = var.subnet_name
   resource_group_name = azurerm_resource_group.advanced.name
   virtual_network_name = azurerm_virtual_network.advanced.name
   address_prefixes = ["10.0.1.0/24"]
@@ -84,7 +84,7 @@ resource "azurerm_public_ip" "advanced" {
 }
 #Define a network interface
 resource "azurerm_network_interface" "advanced" {
-  name = "advanced-nic"
+  name = var.nic_name
   location = azurerm_resource_group.advanced.location
   resource_group_name = azurerm_resource_group.advanced.name
 
