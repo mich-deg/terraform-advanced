@@ -146,7 +146,11 @@ resource "azurerm_linux_virtual_machine" "nginxVM" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
-
   # disable_password_authentication = false
+}
+
+data "azurerm_public_ip" "ad-ip-data" {
+  name                = azurerm_public_ip.advanced-IP.name
+  resource_group_name = azurerm_resource_group.advanced-rg.name
 }
 
