@@ -17,7 +17,7 @@ resource "azurerm_resource_group" "advanced-rg" {
   location = var.location
   tags = {
     source      = "terraform"
-    environment = "dev"
+    environment = var.envirnoment_map["DEV"]
   }
 }
 
