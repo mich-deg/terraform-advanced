@@ -18,3 +18,10 @@ variable "envirnoment_map" {
     PROD = "prod"
   }
 }
+
+variable "username" {
+  type = string
+  sensitive = true
+  default = "adminuser"
+}
+

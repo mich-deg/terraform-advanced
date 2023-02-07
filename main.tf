@@ -126,15 +126,14 @@ resource "azurerm_linux_virtual_machine" "nginxVM" {
   resource_group_name = azurerm_resource_group.advanced-rg.name
   location            = azurerm_resource_group.advanced-rg.location
   size                = "Standard_DS1_v2"
-  admin_username      = "adminuser"
+  admin_username      = var.username
   # admin_password        = "P@ssw0rd12!"
   network_interface_ids = [azurerm_network_interface.advanced-nic.id]
 
   admin_ssh_key {
-    username   = "adminuser"
+    username   = var.username
     public_key = file("~/.ssh/terraformkey.pub")
   }
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
@@ -154,6 +153,3 @@ data "azurerm_public_ip" "ad-ip-data" {
   resource_group_name = azurerm_resource_group.advanced-rg.name
 }
 
-output "public_ip_address" {
-  value = "${azurerm_linux_virtual_machine.nginxVM.name}: ${data.azurerm_public_ip.ad-ip-data.ip_address}"
-}
